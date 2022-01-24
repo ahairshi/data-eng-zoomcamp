@@ -207,104 +207,35 @@ select COUNT(1) from zones;
 | 265   |
 +-------+
 ```
+
+## Question 3. Count records 
+
+How many taxi trips were there on January 15?
+
+Consider only trips that started on January 15.
+
+> Answer
 ```
 SELECT COUNT(1) FROM trips WHERE to_char(tpep_pickup_datetime,'DD-MM-YYYY') = '15-01-2021';
 +-------+
 | count |
 |-------|
 | 53024 |
-+-------+
-SELECT 1
-Time: 1.139s (1 second), executed in: 1.129s (1 second)
-root@localhost:ny_taxi> SELECT
- to_char(tpep_pickup_datetime,'DD-MM-YYYY') As "Day",
- MAX(tip_amount) as "tip_max"
- FROM trips
- WHERE to_char(tpep_pickup_datetime,'MM-YYYY') = '01-2021'
- GROUP BY 1
- ORDER BY 2 DESC;
-+------------+---------+
-| Day        | tip_max |
-|------------+---------|
-| 20-01-2021 | 1140.44 |
-| 04-01-2021 | 696.48  |
-| 03-01-2021 | 369.4   |
-| 26-01-2021 | 250.0   |
-| 09-01-2021 | 230.0   |
-| 19-01-2021 | 200.8   |
-| 30-01-2021 | 199.12  |
-| 12-01-2021 | 192.61  |
-| 21-01-2021 | 166.0   |
-| 01-01-2021 | 158.0   |
-| 05-01-2021 | 151.0   |
-| 11-01-2021 | 145.0   |
-| 24-01-2021 | 122.0   |
-| 02-01-2021 | 109.15  |
-| 31-01-2021 | 108.5   |
-| 25-01-2021 | 100.16  |
-| 16-01-2021 | 100.0   |
-| 13-01-2021 | 100.0   |
-| 23-01-2021 | 100.0   |
-| 08-01-2021 | 100.0   |
-| 27-01-2021 | 100.0   |
-| 06-01-2021 | 100.0   |
-| 15-01-2021 | 99.0    |
-| 07-01-2021 | 95.0    |
-| 14-01-2021 | 95.0    |
-| 22-01-2021 | 92.55   |
-| 10-01-2021 | 91.0    |
-| 18-01-2021 | 90.0    |
-| 28-01-2021 | 77.14   |
-| 29-01-2021 | 75.0    |
-| 17-01-2021 | 65.0    |
-+------------+---------+
-SELECT 31
-Time: 4.032s (4 seconds), executed in: 4.019s (4 seconds)
-root@localhost:ny_taxi> SELECT
- to_char(tpep_pickup_datetime,'DD-MM-YYYY') As "Day",
- MAX(tip_amount) as "tip_max"
- FROM trips
- WHERE to_char(tpep_pickup_datetime,'MM-YYYY') = '01-2021'
- GROUP BY 1
- ORDER BY 2 DESC
- LIMI+------------+---------+
-| Day        | tip_max |
-|------------+---------|
-| 20-01-2021 | 1140.44 |
-| 04-01-2021 | 696.48  |
-| 03-01-2021 | 369.4   |
-| 26-01-2021 | 250.0   |
-| 09-01-2021 | 230.0   |
-| 19-01-2021 | 200.8   |
-| 30-01-2021 | 199.12  |
-| 12-01-2021 | 192.61  |
-| 21-01-2021 | 166.0   |
-| 01-01-2021 | 158.0   |
-| 05-01-2021 | 151.0   |
-| 11-01-2021 | 145.0   |
-| 24-01-2021 | 122.0   |
-| 02-01-2021 | 109.15  |
-| 31-01-2021 | 108.5   |
-| 25-01-2021 | 100.16  |
-| 16-01-2021 | 100.0   |
-| 13-01-2021 | 100.0   |
-| 23-01-2021 | 100.0   |
-| 08-01-2021 | 100.0   |
-| 27-01-2021 | 100.0   |
-| 06-01-2021 | 100.0   |
-| 15-01-2021 | 99.0    |
-| 07-01-2021 | 95.0    |
-| 14-01-2021 | 95.0    |
-| 22-01-2021 | 92.55   |
-| 10-01-2021 | 91.0    |
-| 18-01-2021 | 90.0    |
-| 28-01-2021 | 77.14   |
-| 29-01-2021 | 75.0    |
-| 17-01-2021 | 65.0    |
-+------------+---------+
-SELECT 31
-Time: 3.973s (3 seconds), executed in: 3.963s (3 seconds)
-root@localhost:ny_taxi> SELECT
++-------+ 
+```
+
+## Question 4. Largest tip for each day
+
+Find the largest tip for each day. 
+On which day it was the largest tip in January?
+
+Use the pick up time for your calculations.
+
+(note: it's not a typo, it's "tip", not "trip")
+
+> Answer
+```
+SELECT
  to_char(tpep_pickup_datetime,'DD-MM-YYYY') As "Day",
  MAX(tip_amount) as "tip_max"
  FROM trips
@@ -318,62 +249,7 @@ root@localhost:ny_taxi> SELECT
 |------------+---------|
 | 20-01-2021 | 1140.44 |
 +------------+---------+
-SELECT 1
-Time: 4.241s (4 seconds), executed in: 4.231s (4 seconds)
-root@localhost:ny_taxi> SELECT z1."LocationID", z1."Zone", res."count" from zones z1
- join
- (SELECT trips."DOLocationID", count(trips."DOLocationID")
- FROM trips, zones
- WHERE trips."PULocationID" = zones."LocationID" AND
- to_char(trips.tpep_pickup_datetime,'DD-MM-YYYY') = '14-01-2021' AND
- zones."LocationID" = (select "LocationID" from zones where "Zone" ='Central Park')
- GROUP BY 1
- ORDER BY 2 DESC
- LIMIT 1) res
- ON z1."LocationID" = res."DOLocationID";
-+------------+-----------------------+-------+
-| LocationID | Zone                  | count |
-|------------+-----------------------+-------|
-| 237        | Upper East Side South | 97    |
-+------------+-----------------------+-------+
-SELECT 1
-Time: 0.116s
-root@localhost:ny_taxi> select ZP."Zone" as pu_zone, ZD."Zone" as du_zone
- , concat(ZP."Zone", '/' ,coalesce(ZD."Zone",'Unknown')) as pair
- from
- (SELECT T."PULocationID", T."DOLocationID",
- AVG (T."total_amount") AS avg_amt
- FROM trips T
- GROUP BY 1, 2
- ORDER BY 3 DESC
- LIMIT 1) PD
- JOIN zones ZP on ZP."LocationID" = PD."PULocationID"
- JOIN zones ZD on ZD."LocationID" = PD."DOLocationID";
-+---------------+---------+-----------------------+
-| pu_zone       | du_zone | pair                  |
-|---------------+---------+-----------------------|
-| Alphabet City | <null>  | Alphabet City/Unknown |
-+---------------+---------+-----------------------+
-SELECT 1
-Time: 0.291s
 ```
-
-## Question 3. Count records 
-
-How many taxi trips were there on January 15?
-
-Consider only trips that started on January 15.
-
-
-## Question 4. Largest tip for each day
-
-Find the largest tip for each day. 
-On which day it was the largest tip in January?
-
-Use the pick up time for your calculations.
-
-(note: it's not a typo, it's "tip", not "trip")
-
 
 ## Question 5. Most popular destination
 
@@ -384,6 +260,26 @@ Use the pick up time for your calculations.
 
 Enter the zone name (not id). If the zone name is unknown (missing), write "Unknown" 
 
+> Answer
+```
+SELECT z1."LocationID", z1."Zone", res."count" from zones z1
+ join
+ (SELECT trips."DOLocationID", count(trips."DOLocationID")
+ FROM trips, zones
+ WHERE trips."PULocationID" = zones."LocationID" AND
+ to_char(trips.tpep_pickup_datetime,'DD-MM-YYYY') = '14-01-2021' AND
+ zones."LocationID" = (select "LocationID" from zones where "Zone" ='Central Park')
+ GROUP BY 1
+ ORDER BY 2 DESC
+ LIMIT 1) res
+ ON z1."LocationID" = res."DOLocationID";
+ 
++------------+-----------------------+-------+
+| LocationID | Zone                  | count |
+|------------+-----------------------+-------|
+| 237        | Upper East Side South | 97    |
++------------+-----------------------+-------+
+```
 
 ## Question 6. Most expensive locations
 
@@ -397,6 +293,27 @@ For example:
 "Jamaica Bay / Clinton East"
 
 If any of the zone names are unknown (missing), write "Unknown". For example, "Unknown / Clinton East". 
+
+> Answer
+```
+select ZP."Zone" as pu_zone, ZD."Zone" as du_zone
+ , concat(ZP."Zone", '/' ,coalesce(ZD."Zone",'Unknown')) as pair
+ from
+ (SELECT T."PULocationID", T."DOLocationID",
+ AVG (T."total_amount") AS avg_amt
+ FROM trips T
+ GROUP BY 1, 2
+ ORDER BY 3 DESC
+ LIMIT 1) PD
+ JOIN zones ZP on ZP."LocationID" = PD."PULocationID"
+ JOIN zones ZD on ZD."LocationID" = PD."DOLocationID";
+ 
++---------------+---------+-----------------------+
+| pu_zone       | du_zone | pair                  |
+|---------------+---------+-----------------------|
+| Alphabet City | <null>  | Alphabet City/Unknown |
++---------------+---------+-----------------------+
+```
 
 
 ## Submitting the solutions
