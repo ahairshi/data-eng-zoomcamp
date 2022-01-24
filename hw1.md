@@ -172,7 +172,7 @@ SELECT
 | trips      | total_amount          | double precision            |
 | trips      | store_and_fwd_flag    | text                        |
 +------------+-----------------------+-----------------------------+
-```
+
 select COUNT(1) from trips;
 +---------+
 | count   |
@@ -180,6 +180,7 @@ select COUNT(1) from trips;
 | 1369765 |
 +---------+
 ```
+
 ```
 SELECT
     table_name,
