@@ -33,117 +33,86 @@ How often do we need to run this DAG?
 Monthly
 ```
 
-## Question 3. Count records 
+## Re-running the DAGs for past dates
 
-How many taxi trips were there on January 15?
+To execute your DAG for past dates, try this:
 
-Consider only trips that started on January 15.
+* First, delete your DAG from the web interface (the bin icon)
+* Set the `catchup` parameter to `True`
+* Be careful with running a lot of jobs in parallel - your system may not like it. Don't set it higher than 3: `max_active_runs=3`
+* Rename the DAG to something like `data_ingestion_gcs_dag_v02` 
+* Execute it from the Airflow GUI (the play button)
 
-> Answer
-```
-SELECT COUNT(1) FROM trips WHERE to_char(tpep_pickup_datetime,'DD-MM-YYYY') = '15-01-2021';
-+-------+
-| count |
-|-------|
-| 53024 |
-+-------+ 
-```
 
-## Question 4. Largest tip for each day
+Also, there's no data for the recent months, but `curl` will exit successfully.
+To make it fail on 404, add the `-f` flag:
 
-Find the largest tip for each day. 
-On which day it was the largest tip in January?
-
-Use the pick up time for your calculations.
-
-(note: it's not a typo, it's "tip", not "trip")
-
-> Answer
-```
-SELECT
- to_char(tpep_pickup_datetime,'DD-MM-YYYY') As "Day",
- MAX(tip_amount) as "tip_max"
- FROM trips
- WHERE to_char(tpep_pickup_datetime,'MM-YYYY') = '01-2021'
- GROUP BY 1
- ORDER BY 2 DESC
-
- LIMIT 1;
-+------------+---------+
-| Day        | tip_max |
-|------------+---------|
-| 20-01-2021 | 1140.44 |
-+------------+---------+
+```bash
+curl -sSLf { URL } > { LOCAL_PATH }
 ```
 
-## Question 5. Most popular destination
+When you run this for all the data, the temporary files will be saved in Docker and will consume your 
+disk space. If it causes problems for you, add another step in your DAG that cleans everything up.
+It could be a bash operator that runs this command:
 
-What was the most popular destination for passengers picked up 
-in central park on January 14?
-
-Use the pick up time for your calculations.
-
-Enter the zone name (not id). If the zone name is unknown (missing), write "Unknown" 
-
-> Answer
-```
-SELECT z1."LocationID", z1."Zone", res."count" from zones z1
- join
- (SELECT trips."DOLocationID", count(trips."DOLocationID")
- FROM trips, zones
- WHERE trips."PULocationID" = zones."LocationID" AND
- to_char(trips.tpep_pickup_datetime,'DD-MM-YYYY') = '14-01-2021' AND
- zones."LocationID" = (select "LocationID" from zones where "Zone" ='Central Park')
- GROUP BY 1
- ORDER BY 2 DESC
- LIMIT 1) res
- ON z1."LocationID" = res."DOLocationID";
- 
-+------------+-----------------------+-------+
-| LocationID | Zone                  | count |
-|------------+-----------------------+-------|
-| 237        | Upper East Side South | 97    |
-+------------+-----------------------+-------+
+```bash
+rm name-of-csv-file.csv name-of-parquet-file.parquet
 ```
 
-## Question 6. Most expensive locations
+## Question 3: DAG for FHV Data (2 points)
 
-What's the pickup-dropoff pair with the largest 
-average price for a ride (calculated based on `total_amount`)?
+Now create another DAG - for uploading the FHV data. 
 
-Enter two zone names separated by a slash
+We will need three steps: 
 
-For example:
+* Donwload the data
+* Parquetize it 
+* Upload to GCS
 
-"Jamaica Bay / Clinton East"
+If you don't have a GCP account, for local ingestion you'll need two steps:
 
-If any of the zone names are unknown (missing), write "Unknown". For example, "Unknown / Clinton East". 
+* Download the data
+* Ingest to Postgres
 
-> Answer
+Use the same frequency and the start date as for the yellow taxi dataset
+
+Question: how many DAG runs are green for data in 2019 after finishing everything? 
+
+Note: when processing the data for 2020-01 you probably will get an error. It's up 
+to you to decide what to do with it - for Week 3 homework we won't need 2020 data.
+
+>Answer:
 ```
-select ZP."Zone" as pu_zone, ZD."Zone" as du_zone
- , concat(ZP."Zone", '/' ,coalesce(ZD."Zone",'Unknown')) as pair
- from
- (SELECT T."PULocationID", T."DOLocationID",
- AVG (T."total_amount") AS avg_amt
- FROM trips T
- GROUP BY 1, 2
- ORDER BY 3 DESC
- LIMIT 1) PD
- JOIN zones ZP on ZP."LocationID" = PD."PULocationID"
- JOIN zones ZD on ZD."LocationID" = PD."DOLocationID";
- 
-+---------------+---------+-----------------------+
-| pu_zone       | du_zone | pair                  |
-|---------------+---------+-----------------------|
-| Alphabet City | <null>  | Alphabet City/Unknown |
-+---------------+---------+-----------------------+
+12 runs
 ```
 
+## Question 4: DAG for Zones (2 points)
+
+
+Create the final DAG - for Zones:
+
+* Download it
+* Parquetize 
+* Upload to GCS
+
+(Or two steps for local ingestion: download -> ingest to postgres)
+
+How often does it need to run?
+
+* Daily
+* Monthly
+* Yearly
+* Once
+
+>Answer:
+```
+Once
+```
 
 ## Submitting the solutions
 
-* Form for submitting: https://forms.gle/yGQrkgRdVbiFs8Vd7
+* Form for submitting: TBA
 * You can submit your homework multiple times. In this case, only the last submission will be used. 
 
-Deadline: 24 January, 17:00 CET
+Deadline: February 4, 22:00 CET 
+
