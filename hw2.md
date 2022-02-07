@@ -3,15 +3,15 @@
 
 ## Question 1. Start date for the Yellow taxi data
 
+You'll need to parametrize the DAG for processing the yellow taxi data that
+we created in the videos. 
+
 What should be the start date for this dag?
 
-2019-01-01
-
-2020-01-01
-
-2021-01-01
-
-days_ago(1)
+* 2019-01-01
+* 2020-01-01
+* 2021-01-01
+* days_ago(1)
 
 
 >Answer:
@@ -19,185 +19,18 @@ days_ago(1)
 2019-01-01
 ```
 
-## Question 2. Terraform 
+## Question 2: Frequency for the Yellow taxi data (1 point)
 
-Now install terraform and go to the terraform directory (`week_1_basics_n_setup/1_terraform_gcp/terraform`)
+How often do we need to run this DAG?
 
-After that, run
+* Daily
+* Monthly
+* Yearly
+* Once
 
-* `terraform init`
-* `terraform plan`
-* `terraform apply` 
-
-Apply the plan and copy the output (after running `apply`) to the form.
-
-It should be the entire output - from the moment you typed `terraform init` to the very end.
-
->Output
+>Answer:
 ```
-(data-engineering-zoomcamp) % terraform apply -var="project=dtc-de-course-339017"
-
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # google_bigquery_dataset.dataset will be created
-  + resource "google_bigquery_dataset" "dataset" {
-      + creation_time              = (known after apply)
-      + dataset_id                 = "trips_data_all"
-      + delete_contents_on_destroy = false
-      + etag                       = (known after apply)
-      + id                         = (known after apply)
-      + last_modified_time         = (known after apply)
-      + location                   = "europe-west6"
-      + project                    = "dtc-de-course-339017"
-      + self_link                  = (known after apply)
-
-      + access {
-          + domain         = (known after apply)
-          + group_by_email = (known after apply)
-          + role           = (known after apply)
-          + special_group  = (known after apply)
-          + user_by_email  = (known after apply)
-
-          + view {
-              + dataset_id = (known after apply)
-              + project_id = (known after apply)
-              + table_id   = (known after apply)
-            }
-        }
-    }
-
-  # google_storage_bucket.data-lake-bucket will be created
-  + resource "google_storage_bucket" "data-lake-bucket" {
-      + force_destroy               = true
-      + id                          = (known after apply)
-      + location                    = "EUROPE-WEST6"
-      + name                        = "dtc_data_lake_dtc-de-course-339017"
-      + project                     = (known after apply)
-      + self_link                   = (known after apply)
-      + storage_class               = "STANDARD"
-      + uniform_bucket_level_access = true
-      + url                         = (known after apply)
-
-      + lifecycle_rule {
-          + action {
-              + type = "Delete"
-            }
-
-          + condition {
-              + age                   = 30
-              + matches_storage_class = []
-              + with_state            = (known after apply)
-            }
-        }
-
-      + versioning {
-          + enabled = true
-        }
-    }
-
-Plan: 2 to add, 0 to change, 0 to destroy.
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-google_bigquery_dataset.dataset: Creating...
-google_storage_bucket.data-lake-bucket: Creating...
-google_bigquery_dataset.dataset: Creation complete after 2s [id=projects/dtc-de-course-339017/datasets/trips_data_all]
-google_storage_bucket.data-lake-bucket: Creation complete after 2s [id=dtc_data_lake_dtc-de-course-339017]
-```
-
-## Prepare Postgres 
-
-Run Postgres and load data as shown in the videos
-
-We'll use the yellow taxi trips from January 2021:
-
-```bash
-wget https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv
-```
-
-You will also need the dataset with zones:
-
-```bash 
-wget https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv
-```
-
-Download this data and put it to Postgres
-
-> After Loading data
-
-```
-SELECT
-    table_name,
-    column_name,
-    data_type
- FROM
-    information_schema.columns
- WHERE
-    table_name = 'trips';
-+------------+-----------------------+-----------------------------+
-| table_name | column_name           | data_type                   |
-|------------+-----------------------+-----------------------------|
-| trips      | congestion_surcharge  | double precision            |
-| trips      | VendorID              | bigint                      |
-| trips      | tpep_pickup_datetime  | timestamp without time zone |
-| trips      | tpep_dropoff_datetime | timestamp without time zone |
-| trips      | passenger_count       | bigint                      |
-| trips      | trip_distance         | double precision            |
-| trips      | RatecodeID            | bigint                      |
-| trips      | index                 | bigint                      |
-| trips      | PULocationID          | bigint                      |
-| trips      | DOLocationID          | bigint                      |
-| trips      | payment_type          | bigint                      |
-| trips      | fare_amount           | double precision            |
-| trips      | extra                 | double precision            |
-| trips      | mta_tax               | double precision            |
-| trips      | tip_amount            | double precision            |
-| trips      | tolls_amount          | double precision            |
-| trips      | improvement_surcharge | double precision            |
-| trips      | total_amount          | double precision            |
-| trips      | store_and_fwd_flag    | text                        |
-+------------+-----------------------+-----------------------------+
-
-select COUNT(1) from trips;
-+---------+
-| count   |
-|---------|
-| 1369765 |
-+---------+
-```
-
-```
-SELECT
-    table_name,
-    column_name,
-    data_type
- FROM
-    information_schema.columns
- WHERE
-    table_name = 'zones';
-+------------+--------------+-----------+
-| table_name | column_name  | data_type |
-|------------+--------------+-----------|
-| zones      | index        | bigint    |
-| zones      | LocationID   | bigint    |
-| zones      | Borough      | text      |
-| zones      | Zone         | text      |
-| zones      | service_zone | text      |
-+------------+--------------+-----------+
-
-select COUNT(1) from zones;
-+-------+
-| count |
-|-------|
-| 265   |
-+-------+
+Monthly
 ```
 
 ## Question 3. Count records 
