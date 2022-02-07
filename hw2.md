@@ -6,9 +6,13 @@
 What should be the start date for this dag?
 
 2019-01-01
+
 2020-01-01
+
 2021-01-01
+
 days_ago(1)
+
 
 >Answer:
 ```
