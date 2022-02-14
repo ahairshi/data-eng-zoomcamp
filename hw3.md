@@ -4,7 +4,7 @@ Can load the data for cloud storage and run a count(*)
 > Code:
 ```sql
 SELECT count(*)
-FROM `animated-surfer-338618.trips_data_all.fhv_tripdata`
+FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-12-31";
 ```
 >Answer:
@@ -18,7 +18,7 @@ Can run a distinct query on the table from question 1
 > Code:
 ```sql
 SELECT count(DISTINCT(dispatching_base_num))
-FROM `animated-surfer-338618.trips_data_all.fhv_tripdata`
+FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-12-31";
 ```
 >Answer:
@@ -43,13 +43,13 @@ count(*). Estimated data processed can be found in top right corner and
 actual data processed can be found after the query is executed.
 >Code:
 ```sql
-CREATE OR REPLACE TABLE `animated-surfer-338618.trips_data_all.fhv_tripdata_clustered`
+CREATE OR REPLACE TABLE `dtc-de-course-339017.trips_data_all.fhv_tripdata_clustered`
 PARTITION BY DATE(pickup_datetime)
 CLUSTER BY dispatching_base_num AS
-SELECT * FROM `animated-surfer-338618.trips_data_all.fhv_tripdata`;
+SELECT * FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata`;
 
 SELECT count(*)
-FROM `animated-surfer-338618.trips_data_all.fhv_tripdata_clustered`
+FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata_clustered`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-03-31"
 AND dispatching_base_num IN ('B00987','B02060','B02279');
 ```
@@ -69,7 +69,7 @@ Clustering cannot be created on all data types.
 >Code:
 ```sql
 SELECT count(DISTINCT(SR_Flag))
-FROM `animated-surfer-338618.trips_data_all.fhv_tripdata`
+FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-03-31";
 ```
 >Answer:
