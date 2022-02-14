@@ -4,7 +4,7 @@ Can load the data for cloud storage and run a count(*)
 > Code:
 ```sql
 SELECT count(*)
-FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata`
+FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata_external_table`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-12-31";
 ```
 >Answer:
@@ -18,7 +18,7 @@ Can run a distinct query on the table from question 1
 > Code:
 ```sql
 SELECT count(DISTINCT(dispatching_base_num))
-FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata`
+FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata_external_table`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-12-31";
 ```
 ```
@@ -68,7 +68,7 @@ actual data processed can be found after the query is executed.
 CREATE OR REPLACE TABLE `dtc-de-course-339017.nyc_trips.fhv_tripdata_clustered`
 PARTITION BY DATE(pickup_datetime)
 CLUSTER BY dispatching_base_num AS
-SELECT * FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata`;
+SELECT * FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata_external_table`;
 
 SELECT count(*)
 FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata_clustered`
@@ -91,7 +91,7 @@ Clustering cannot be created on all data types.
 >Code:
 ```sql
 SELECT count(DISTINCT(SR_Flag))
-FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata`
+FROM `dtc-de-course-339017.nyc_trips.fhv_tripdata_external_table`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-03-31";
 ```
 >Answer:
