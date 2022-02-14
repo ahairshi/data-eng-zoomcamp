@@ -21,6 +21,28 @@ SELECT count(DISTINCT(dispatching_base_num))
 FROM `dtc-de-course-339017.trips_data_all.fhv_tripdata`
 WHERE DATE(pickup_datetime) BETWEEN "2019-01-01" AND "2019-12-31";
 ```
+```
+Table info
+Table ID
+ dtc-de-course-339017:nyc_trips.hw-2 
+Table size
+ 6.5 KB 
+Long-term storage size
+ 0 B 
+Number of rows
+ 792 
+Created
+ 14 Feb 2022, 19:34:55 UTC+5:30 
+Last modified
+ 14 Feb 2022, 19:34:55 UTC+5:30 
+Table expiry
+ NEVER 
+Data location
+ asia-south1 
+Description
+
+```
+
 >Answer:
 ```
 792
